@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="OptiWorld: Optimal Control for Video World Generation under Physical Constraints">
+  <meta name="keywords" content="OptiWorld, video generation, world models, optimal control, physical constraints">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OptiWorld</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro">
+  <link rel="stylesheet" href="./static/bulma.min.css">
+  <link rel="stylesheet" href="./static/index.css">
+
+  <script src="./static/index.js"></script>
+
+  <style>
+    :root {
+      --opti-red: #b71c1c;
+      --opti-blue: #1d5f86;
+      --opti-ink: #1f2933;
+      --opti-muted: #5b6675;
+      --opti-panel: #f6f8fb;
+      --opti-border: #d9e2ec;
+    }
+
+    body {
+      color: var(--opti-ink);
+    }
+
+    .opti-title span {
+      display: inline-block;
+    }
+
+    .project-subtitle {
+      font-size: 1.65rem;
+      line-height: 1.22;
+      margin-top: 0.65rem;
+      white-space: nowrap;
+    }
+
+    .main-hero .hero-body {
+      padding-bottom: 0.7rem;
+    }
+
+    .video-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .video-item,
+    .video-item-compare,
+    .video-item-small {
+      text-align: center;
+    }
+
+    .video-item {
+      width: 31%;
+      min-width: 260px;
+    }
+
+    .video-item-compare {
+      width: 15.5%;
+      min-width: 150px;
+    }
+
+    .video-item-small {
+      width: 23%;
+      min-width: 210px;
+    }
+
+    .video-item .title,
+    .video-item-compare .title,
+    .video-item-small .title {
+      margin-bottom: 0.45rem;
+    }
+
+    video,
+    .paper-figure,
+    .media-frame,
+    .plan-image {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--opti-border);
+      background: #fff;
+    }
+
+    .media-frame {
+      display: block;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+    }
+
+    .equal-figure {
+      height: 280px;
+      object-fit: contain;
+    }
+
+    .paper-figure {
+      display: block;
+      margin: 0 auto;
+    }
+
+    .teaser-figure {
+      max-width: 940px;
+      max-height: 430px;
+      object-fit: contain;
+    }
+
+    .method-figure {
+      max-width: 900px;
+      max-height: 520px;
+      object-fit: contain;
+    }
+
+    .section-kicker {
+      color: var(--opti-blue);
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .compact-section {
+      padding-top: 2.35rem;
+      padding-bottom: 2.35rem;
+    }
+
+    .compact-section + .compact-section {
+      padding-top: 2.8rem;
+    }
+
+    .tl-dr-section .hero-body {
+      padding-top: 0.4rem;
+      padding-bottom: 0.85rem;
+    }
+
+    .tl-dr-section .subtitle {
+      margin-bottom: 0;
+    }
+
+    .opti-panel {
+      background: var(--opti-panel);
+      border: 1px solid var(--opti-border);
+      border-radius: 8px;
+      padding: 1.15rem;
+      height: 100%;
+    }
+
+    .metric-table {
+      font-size: 0.88rem;
+      overflow-x: auto;
+    }
+
+    .metric-table table {
+      min-width: 760px;
+    }
+
+    .metric-table th,
+    .metric-table td {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .best {
+      background: #ffe5e5;
+      color: #8c1515;
+      font-weight: 700;
+    }
+
+    .second {
+      background: #e5f0ff;
+      color: #1d4f7a;
+      font-weight: 700;
+    }
+
+    .case-selector .button,
+    .i2v-selector .button,
+    .v2v-selector .button {
+      border-radius: 6px;
+      white-space: normal;
+      height: auto;
+      min-height: 2.25rem;
+    }
+
+    .case-pair {
+      display: grid;
+      grid-template-columns: minmax(260px, 1.1fr) minmax(260px, 0.9fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .more-case-media {
+      height: 290px;
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .equal-pair {
+      grid-template-columns: repeat(3, minmax(240px, 1fr));
+    }
+
+    .caption-text {
+      color: var(--opti-muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+      margin-top: 0.6rem;
+    }
+
+    .compact-caption {
+      font-size: 0.84rem;
+      line-height: 1.25;
+      margin-top: 0.35rem;
+      margin-bottom: 0;
+    }
+
+    .counter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 1rem;
+    }
+
+    .counter-grid.safe-grid {
+      grid-template-columns: repeat(5, minmax(160px, 1fr));
+    }
+
+    .goal-pair-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 1rem;
+    }
+
+    .goal-scene {
+      border: 1px solid var(--opti-border);
+      border-radius: 8px;
+      padding: 0.8rem;
+      background: #fff;
+    }
+
+    .goal-scene-title {
+      margin-bottom: 0.65rem;
+    }
+
+    .goal-plan {
+      margin-bottom: 0.75rem;
+    }
+
+    .goal-plan:last-child {
+      margin-bottom: 0;
+    }
+
+    .goal-plan-label {
+      color: var(--opti-muted);
+      font-size: 0.86rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      text-align: center;
+    }
+
+    .goal-plan img {
+      width: 100%;
+      height: 175px;
+      object-fit: contain;
+      border: 1px solid var(--opti-border);
+      border-radius: 8px;
+      background: #fff;
+      display: block;
+    }
+
+    .counter-card img {
+      width: 100%;
+      height: 185px;
+      object-fit: contain;
+      border: 1px solid var(--opti-border);
+      border-radius: 8px;
+      background: #fff;
+      display: block;
+    }
+
+    .counter-card h6 {
+      margin-bottom: 0.4rem;
+    }
+
+    .bibtex {
+      white-space: pre-wrap;
+      font-size: 0.88rem;
+    }
+
+    @media screen and (max-width: 768px) {
+      .project-subtitle {
+        font-size: 1.35rem;
+        white-space: normal;
+      }
+
+      .video-item,
+      .video-item-compare,
+      .video-item-small {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .case-pair {
+        grid-template-columns: 1fr;
+      }
+
+      .equal-figure {
+        height: 220px;
+      }
+
+      .more-case-media {
+        height: 240px;
+      }
+
+      .counter-grid,
+      .counter-grid.safe-grid,
+      .goal-pair-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .counter-card img {
+        height: 220px;
+      }
+
+      .goal-plan img {
+        height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<section class="hero main-hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title opti-title">
+            <span style="color:#8c1515;">O</span><span style="color:#a51d2d;">p</span><span style="color:#b52f46;">t</span><span style="color:#8c3f70;">i</span><span style="color:#5f4f96;">W</span><span style="color:#355f9d;">o</span><span style="color:#1d6f8a;">r</span><span style="color:#1d5f86;">l</span><span style="color:#124e6f;">d</span>
+          </h1>
+          <h3 class="title publication-title project-subtitle">Optimal Control for Video World Generation under Physical Constraints</h3>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><a href="https://yuyuan-space.github.io/">Yu Yuan</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://yuanjianhao508.github.io/">Jianhao Yuan</a><sup>2</sup>,</span>
+            <span class="author-block"><a href="https://xijun-w.github.io/">Xijun Wang</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://lidaiqing.github.io/">Daiqing Li</a><sup>3</sup>,</span>
+            <span class="author-block"><a href="https://arking1995.github.io/">Liu He</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://luling06.github.io/">Lu Ling</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://engineering.purdue.edu/ChanGroup/stanleychan.html">Stanley H. Chan</a><sup>1</sup></span>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Purdue University<sup>1</sup>, University of Oxford<sup>2</sup>, Roblox<sup>3</sup></span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                  <span>arXiv (coming soon)</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/pandayuanyu/OptiWorld" class="external-link button is-normal is-rounded is-dark">
+                  <span>Code (coming soon)</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                  <span>Benchmark (coming soon)</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser tl-dr-section">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <h2 class="subtitle has-text-centered">
+        <span class="has-text-weight-bold" style="color:#8C1515;">TL;DR:</span>
+        <span class="has-text-weight-bold"><i>OptiWorld makes video world models choose better futures: safer, smoother, more efficient, and physically constrained motions before rendering.</i></span>
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-small compact-section">
+  <div class="container is-max-widescreen">
+    <img class="paper-figure teaser-figure" src="./static/images/optiworld/teaser.png" alt="OptiWorld teaser">
+    <p class="caption-text has-text-centered">
+      Without explicit planning, generated motion can be visually plausible but unsafe, jerky, or inefficient. OptiWorld first plans an optimized trajectory, then uses that trajectory as generation guidance.
+    </p>
+  </div>
+</section>
+
+<section class="section compact-section" id="Abstract">
+  <div class="container is-max-desktop content">
+    <h2 class="title has-text-centered">Abstract</h2>
+    <div class="content has-text-justified">
+      <p>
+        Video generation models are becoming a scalable form of world models, but they mainly generate plausible motion rather than proactively control or optimize the underlying dynamics. As a result, an object in the generated video may follow trajectories that are unsafe, not smooth, inefficient, or physically inconsistent. In this work, we propose <strong>OptiWorld</strong>, a framework that brings classical optimal control into video generation at inference time. OptiWorld first extracts a compact, task-relevant world state, then plans an optimal trajectory under physical constraints, and finally renders the video conditioned on this trajectory. We formulate planning as a geometric problem on a continuous manifold, which converts 3D geometry and task-dependent physical constraints into a unified planning geometry. By adding this optimal-control layer, OptiWorld generates videos with preferable dynamics across goal-conditioned image-to-video generation, video dynamics editing, and counterfactual generation.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section compact-section" id="Framework">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">How OptiWorld Works</h2>
+    <img class="paper-figure method-figure" src="./static/images/optiworld/pipeline.png" alt="OptiWorld pipeline">
+    <div class="columns is-centered mt-4">
+      <div class="column">
+        <div class="opti-panel">
+          <p class="section-kicker">Understanding</p>
+          <p>Builds a compact 3D world state from geometry, segmentation, VLM reasoning, and 3D tracks when editing a source video.</p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="opti-panel">
+          <p class="section-kicker">Planning</p>
+          <p>Converts 3D geometry and task constraints into a continuous planning geometry where hazards, goals, smoothness, and efficiency can be optimized together.</p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="opti-panel">
+          <p class="section-kicker">Generation</p>
+          <p>Renders video from the first frame, prompt, and optimized 3D trajectory using a controllable video generator.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section compact-section" id="I2V">
+  <div class="container is-max-widescreen">
+    <div class="content has-text-centered">
+      <h2 class="title is-3">Goal-conditioned Image-to-Video Generation</h2>
+      <p class="has-text-grey">Click a case to compare OptiWorld with image-to-video and physics-aware baselines.</p>
+      <div class="i2v-selector buttons has-addons is-centered">
+        <button class="button is-light" data-case="1">Case 1</button>
+        <button class="button is-light" data-case="2">Case 2</button>
+        <button class="button is-light" data-case="3">Case 3</button>
+        <button class="button is-light" data-case="4">Case 4</button>
+        <button class="button is-light" data-case="5">Case 5</button>
+        <button class="button is-light" data-case="6">Case 6</button>
+      </div>
+    </div>
+
+    <div id="i2v-video" class="video-container">
+      <div class="video-wrapper">
+        <div class="video-item-compare"><h6 class="title is-6">Input</h6><img id="i2v-input" class="media-frame" src="" alt="Input frame with goal and OptiWorld path"></div>
+        <div class="video-item-compare"><h6 class="title is-6">Cosmos-Predict</h6><video id="i2v-CosmosPredict" autoplay loop muted playsinline controls></video></div>
+        <div class="video-item-compare"><h6 class="title is-6">VLIPP</h6><video id="i2v-VLIPP" autoplay loop muted playsinline controls></video></div>
+        <div class="video-item-compare"><h6 class="title is-6">HunyuanVideo</h6><video id="i2v-HunyuanVideo" autoplay loop muted playsinline controls></video></div>
+        <div class="video-item-compare"><h6 class="title is-6">Wan2.2</h6><video id="i2v-Wan" autoplay loop muted playsinline controls></video></div>
+        <div class="video-item-compare"><h6 class="title is-6">OptiWorld</h6><video id="i2v-OptiWorld" autoplay loop muted playsinline controls></video></div>
+      </div>
+    </div>
+
+    <div class="metric-table table-container mt-4">
+      <h3 class="title is-4 has-text-centered">Quantitative Comparisons on Goal-conditioned I2V</h3>
+      <table class="table is-bordered is-striped is-fullwidth">
+        <thead>
+          <tr>
+            <th>Method</th><th>Goal err. &darr;</th><th>Viol.@succ. &darr;</th><th>Accel. &darr;</th><th>Jerk &darr;</th><th>Energy &darr;</th><th>Mot. smooth &uarr;</th><th>BG cons. &uarr;</th><th>Flicker &uarr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>HunyuanVideo-1.5</td><td>0.548</td><td>0.523</td><td>0.0118</td><td>0.0197</td><td>0.0576</td><td class="second">0.996</td><td>0.961</td><td class="second">0.995</td></tr>
+          <tr><td>Wan2.2</td><td>0.549</td><td>0.523</td><td>0.0172</td><td>0.0304</td><td>0.0860</td><td>0.993</td><td>0.958</td><td>0.990</td></tr>
+          <tr><td>Cosmos-Predict2.5</td><td>0.733</td><td class="second">0.286</td><td>0.0104</td><td>0.0186</td><td class="second">0.0398</td><td>0.994</td><td>0.936</td><td>0.985</td></tr>
+          <tr><td>VLIPP</td><td class="second">0.331</td><td>0.511</td><td class="second">0.0099</td><td class="second">0.0176</td><td>0.0419</td><td>0.994</td><td class="second">0.964</td><td>0.992</td></tr>
+          <tr><td><strong>OptiWorld</strong></td><td class="best">0.310</td><td class="best">0.260</td><td class="best">0.0070</td><td class="best">0.0116</td><td class="best">0.0126</td><td class="best">0.997</td><td class="best">0.982</td><td class="best">0.996</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section compact-section" id="More-I2V">
+  <div class="container is-max-widescreen">
+    <div class="content has-text-centered">
+      <h2 class="title is-3">More OptiWorld I2V Cases</h2>
+      <p class="has-text-grey">Each case shows the planned trajectory and the generated video rendered from it.</p>
+      <div class="case-selector buttons has-addons is-centered">
+        <button class="button is-light" data-case="1">Case 1</button>
+        <button class="button is-light" data-case="2">Case 2</button>
+        <button class="button is-light" data-case="3">Case 3</button>
+        <button class="button is-light" data-case="4">Case 4</button>
+        <button class="button is-light" data-case="5">Case 5</button>
+        <button class="button is-light" data-case="6">Case 6</button>
+        <button class="button is-light" data-case="7">Case 7</button>
+        <button class="button is-light" data-case="8">Case 8</button>
+        <button class="button is-light" data-case="9">Case 9</button>
+      </div>
+    </div>
+
+    <div class="case-pair">
+      <div>
+        <h6 class="title is-6 has-text-centered">Optimized Plan</h6>
+        <img id="more-i2v-plan" class="plan-image more-case-media" src="" alt="OptiWorld optimized plan">
+      </div>
+      <div>
+        <h6 class="title is-6 has-text-centered">Generated Video</h6>
+        <video id="more-i2v-video" class="more-case-media" autoplay loop muted playsinline controls></video>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section compact-section" id="V2V">
+  <div class="container is-max-widescreen">
+    <div class="content has-text-centered">
+      <h2 class="title is-3">Video Dynamics Editing</h2>
+      <p class="has-text-grey">OptiWorld refines source 3D tracks before rendering, producing shorter, smoother, and more physically reasonable motion.</p>
+      <div class="v2v-selector buttons has-addons is-centered">
+        <button class="button is-light" data-case="1">Case 1</button>
+        <button class="button is-light" data-case="2">Case 2</button>
+        <button class="button is-light" data-case="3">Case 3</button>
+        <button class="button is-light" data-case="4">Case 4</button>
+        <button class="button is-light" data-case="5">Case 5</button>
+      </div>
+    </div>
+
+    <div id="v2v-video" class="video-container">
+      <div class="video-wrapper">
+        <div class="video-item"><h6 class="title is-6">Source Video</h6><video id="v2v-source" autoplay loop muted playsinline controls></video></div>
+        <div class="video-item"><h6 class="title is-6">Wan FLF2V</h6><video id="v2v-wan" autoplay loop muted playsinline controls></video></div>
+        <div class="video-item"><h6 class="title is-6">OptiWorld</h6><video id="v2v-optiworld" autoplay loop muted playsinline controls></video></div>
+      </div>
+    </div>
+
+    <div class="content has-text-centered mt-5">
+      <h3 class="title is-4">OptiWorld Result Comparison</h3>
+      <p class="has-text-grey">The track visualizations compare the source motion with OptiWorld's optimized motion. <strong>Optimized Path Comparison</strong> overlays one tracked point before and after optimization.</p>
+    </div>
+
+    <div class="case-pair equal-pair mt-5">
+      <div>
+        <h6 class="title is-6 has-text-centered">Source Tracks</h6>
+        <img id="v2v-source-tracks" class="plan-image equal-figure" src="" alt="Source tracks">
+      </div>
+      <div>
+        <h6 class="title is-6 has-text-centered">Optimized Tracks</h6>
+        <img id="v2v-all-tracks" class="plan-image equal-figure" src="" alt="All optimized tracks">
+      </div>
+      <div>
+        <h6 class="title is-6 has-text-centered">Optimized Path Comparison</h6>
+        <img id="v2v-path" class="plan-image equal-figure" src="" alt="Optimized path comparison">
+        <p class="caption-text compact-caption has-text-centered">Overlay of a single point trajectory before and after optimization.</p>
+      </div>
+    </div>
+
+    <div class="metric-table table-container mt-4">
+      <h3 class="title is-4 has-text-centered">Quantitative Comparisons on Video Dynamics Editing</h3>
+      <table class="table is-bordered is-striped is-fullwidth">
+        <thead>
+          <tr>
+            <th>Method</th><th>Track dev. &darr;</th><th>Accel. &darr;</th><th>Jerk &darr;</th><th>Path len. &darr;</th><th>Energy &darr;</th><th>Mot. smooth &uarr;</th><th>BG cons. &uarr;</th><th>Flicker &uarr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Source video</td><td>-</td><td class="second">0.0124</td><td class="second">0.0205</td><td class="second">0.647</td><td class="second">0.0269</td><td>0.993</td><td class="best">0.969</td><td>0.988</td></tr>
+          <tr><td>Wan2.1 FLF2V</td><td class="second">0.123</td><td>0.0157</td><td>0.0266</td><td>0.733</td><td>0.0387</td><td class="second">0.995</td><td>0.957</td><td class="best">0.993</td></tr>
+          <tr><td><strong>OptiWorld</strong></td><td class="best">0.113</td><td class="best">0.0107</td><td class="best">0.0181</td><td class="best">0.524</td><td class="best">0.0236</td><td class="best">0.996</td><td class="second">0.967</td><td class="second">0.992</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section compact-section" id="CounterPhysics">
+  <div class="container is-max-widescreen">
+    <div class="content has-text-centered">
+      <h2 class="title is-3">Counterfactual Physics Applications</h2>
+      <p class="has-text-grey">OptiWorld can change goals or constraints before rendering, producing controlled physical variations from the same scene.</p>
+    </div>
+
+    <div class="content">
+      <h3 class="title is-4 has-text-centered">Different Goals</h3>
+      <p class="has-text-grey has-text-centered">For the same scene, changing the target goal produces a different optimized trajectory while keeping the scene understanding and renderer fixed.</p>
+      <div class="goal-pair-grid">
+        <div class="goal-scene">
+          <h6 class="title is-6 has-text-centered goal-scene-title">Scene 1</h6>
+          <div class="goal-plan">
+            <p class="goal-plan-label">Plan A</p>
+            <img src="./static/appendix_counter/multi/1130_1.png" alt="Counterfactual multi-goal scene 1 plan A">
+          </div>
+          <div class="goal-plan">
+            <p class="goal-plan-label">Plan B</p>
+            <img src="./static/appendix_counter/multi/1130_2.png" alt="Counterfactual multi-goal scene 1 plan B">
+          </div>
+        </div>
+        <div class="goal-scene">
+          <h6 class="title is-6 has-text-centered goal-scene-title">Scene 2</h6>
+          <div class="goal-plan">
+            <p class="goal-plan-label">Plan A</p>
+            <img src="./static/appendix_counter/multi/3040_1.png" alt="Counterfactual multi-goal scene 2 plan A">
+          </div>
+          <div class="goal-plan">
+            <p class="goal-plan-label">Plan B</p>
+            <img src="./static/appendix_counter/multi/3040_2.png" alt="Counterfactual multi-goal scene 2 plan B">
+          </div>
+        </div>
+        <div class="goal-scene">
+          <h6 class="title is-6 has-text-centered goal-scene-title">Scene 3</h6>
+          <div class="goal-plan">
+            <p class="goal-plan-label">Plan A</p>
+            <img src="./static/appendix_counter/multi/4881_1.png" alt="Counterfactual multi-goal scene 3 plan A">
+          </div>
+          <div class="goal-plan">
+            <p class="goal-plan-label">Plan B</p>
+            <img src="./static/appendix_counter/multi/4881_2.png" alt="Counterfactual multi-goal scene 3 plan B">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content mt-5">
+      <h3 class="title is-4 has-text-centered">Different Safety Constraints</h3>
+      <div class="counter-grid safe-grid">
+        <div class="counter-card"><h6 class="title is-6 has-text-centered">Safety 1</h6><img src="./static/appendix_counter/safe/1.png" alt="Counterfactual safety example 1"></div>
+        <div class="counter-card"><h6 class="title is-6 has-text-centered">Safety 2</h6><img src="./static/appendix_counter/safe/2.png" alt="Counterfactual safety example 2"></div>
+        <div class="counter-card"><h6 class="title is-6 has-text-centered">Safety 3</h6><img src="./static/appendix_counter/safe/3.png" alt="Counterfactual safety example 3"></div>
+        <div class="counter-card"><h6 class="title is-6 has-text-centered">Safety 4</h6><img src="./static/appendix_counter/safe/4.png" alt="Counterfactual safety example 4"></div>
+        <div class="counter-card"><h6 class="title is-6 has-text-centered">Safety 5</h6><img src="./static/appendix_counter/safe/5.png" alt="Counterfactual safety example 5"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section compact-section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title has-text-centered">BibTeX</h2>
+    <pre><code class="bibtex">@article{Yuan_2026_OptiWorld,
+  title={{OptiWorld}: Optimal Control for Video World Generation under Physical Constraints},
+  author={Yuan, Yu and Yuan, Jianhao and Wang, Xijun and Li, Daiqing and He, Liu and Ling, Lu and Chan, Stanley H.},
+  journal={arXiv preprint},
+  year={2026}
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>Acknowledgement: We thank Yichen Sheng for helpful discussions.</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

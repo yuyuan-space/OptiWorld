@@ -1,0 +1,29 @@
+body {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif;
+}
+
+video {
+  border-radius: 8px;
+}
+
+.link-block a {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.publication-title,
+.publication-authors {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif;
+}
+
+.publication-authors a {
+  color: #d08a00;
+}
+
+.publication-authors a:hover {
+  text-decoration: underline;
+}
+
+.author-block {
+  display: inline-block;
+}
