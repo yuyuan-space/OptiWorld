@@ -150,6 +150,44 @@
       height: 100%;
     }
 
+    .manifold-summary {
+      max-width: 900px;
+      margin: 0 auto 1.2rem;
+      color: var(--opti-muted);
+      line-height: 1.55;
+    }
+
+    .manifold-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 1.2rem;
+    }
+
+    .manifold-card {
+      background: var(--opti-panel);
+      border: 1px solid var(--opti-border);
+      border-radius: 8px;
+      padding: 1rem;
+      height: 100%;
+    }
+
+    .manifold-card p {
+      margin-bottom: 0;
+    }
+
+    .manifold-equation {
+      max-width: 900px;
+      margin: 1.25rem auto 0;
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--opti-border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--opti-muted);
+      text-align: center;
+      line-height: 1.45;
+    }
+
     .metric-table {
       font-size: 0.88rem;
       overflow-x: auto;
@@ -308,6 +346,10 @@
         grid-template-columns: 1fr;
       }
 
+      .manifold-grid {
+        grid-template-columns: 1fr;
+      }
+
       .equal-figure {
         height: 220px;
       }
@@ -435,6 +477,30 @@
           <p class="section-kicker">Generation</p>
           <p>Renders video from the first frame, prompt, and optimized 3D trajectory using a controllable video generator.</p>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section compact-section" id="ManifoldPlanning">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Why Optimal Planning in Unified Manifold?</h2>
+    <p class="manifold-summary has-text-centered">
+      Open-world video generation mixes geometry, intent, and physical constraints. A unified manifold gives these signals a common space, so planning can reason over them as one geometry rather than many disconnected rules.
+    </p>
+
+    <div class="manifold-grid">
+      <div class="manifold-card">
+        <p class="section-kicker">A shared space</p>
+        <p>Different constraints become comparable only after they are placed on the same planning surface.</p>
+      </div>
+      <div class="manifold-card">
+        <p class="section-kicker">Geometry as judgment</p>
+        <p>The manifold expresses what is costly, reachable, or preferred through distance and direction.</p>
+      </div>
+      <div class="manifold-card">
+        <p class="section-kicker">One path, many needs</p>
+        <p>A single trajectory can balance task intent, physical structure, and generative guidance before rendering.</p>
       </div>
     </div>
   </div>
